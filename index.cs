@@ -1,74 +1,135 @@
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 
-namespace TaskManager
+class TaskManager
 {
-    public partial class MainForm : Form
+    static List<string> tasks = new List<string>();
+
+    static void Main()
     {
-        private List<string> tasks;
-
-        public MainForm()
+        while (true)
         {
-            InitializeComponent();
-            tasks = new List<string>();
+            Console.WriteLine("Task Manager");
+            Console.WriteLine("1. Add Task");
+            Console.WriteLine("2. Edit Task");
+            Console.WriteLine("3. Remove Task");
+            Console.WriteLine("4. View Tasks");
+            Console.WriteLine("5. Exit");
+
+            Console.Write("Enter your choice (1-5): ");
+            string choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1":
+                    AddTask();
+                    break;
+                case "2":
+                    EditTask();
+                    break;
+                case "3":
+                    RemoveTask();
+                    break;
+                case "4":
+                    ViewTasks();
+                    break;
+                case "5":
+                    Console.WriteLine("Exiting Task Manager. Goodbye!");
+                    return;
+                default:
+                    Console.WriteLine("Invalid choice. Please enter a number between 1 and 5.");
+                    break;
+            }
+
+            Console.WriteLine();
+        }
+    }
+
+    static void AddTask()
+    {
+        Console.Write("Enter the task: ");
+        string newTask = Console.ReadLine();
+
+        if (!string.IsNullOrEmpty(newTask))
+        {
+            tasks.Add(newTask);
+            Console.WriteLine("Task added successfully!");
+        }
+        else
+        {
+            Console.WriteLine("Task cannot be empty. Please enter a valid task.");
+        }
+    }
+
+    static void EditTask()
+    {
+        if (tasks.Count == 0)
+        {
+            Console.WriteLine("No tasks to edit. Add tasks first.");
+            return;
         }
 
-        private void addButton_Click(object sender, EventArgs e)
+        ViewTasks();
+
+        Console.Write("Enter the index of the task to edit: ");
+        if (int.TryParse(Console.ReadLine(), out int index) && index >= 0 && index < tasks.Count)
         {
-            string newTask = taskTextBox.Text;
-            
-            if (!string.IsNullOrEmpty(newTask))
+            Console.Write("Enter the updated task: ");
+            string updatedTask = Console.ReadLine();
+
+            if (!string.IsNullOrEmpty(updatedTask))
             {
-                tasks.Add(newTask);
-                UpdateTaskListBox();
-                taskTextBox.Clear();
+                                tasks[index] = updatedTask;
+                Console.WriteLine("Task updated successfully!");
             }
             else
             {
-                MessageBox.Show("Please enter a task.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Console.WriteLine("Updated task cannot be empty. Please enter a valid task.");
             }
         }
-
-        private void editButton_Click(object sender, EventArgs e)
+        else
         {
-            int selectedIndex = taskListBox.SelectedIndex;
+            Console.WriteLine("Invalid index. Please enter a valid index within the range of tasks.");
+        }
+    }
 
-            if (selectedIndex != -1)
-            {
-                string updatedTask = Interaction.InputBox("Edit Task", "Enter the updated task:", tasks[selectedIndex]);
-
-                if (!string.IsNullOrEmpty(updatedTask))
-                {
-                    tasks[selectedIndex] = updatedTask;
-                    UpdateTaskListBox();
-                }
-            }
-            else
-            {
-                MessageBox.Show("Please select a task to edit.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+    static void RemoveTask()
+    {
+        if (tasks.Count == 0)
+        {
+            Console.WriteLine("No tasks to remove. Add tasks first.");
+            return;
         }
 
-        private void removeButton_Click(object sender, EventArgs e)
-        {
-            int selectedIndex = taskListBox.SelectedIndex;
+        ViewTasks();
 
-            if (selectedIndex != -1)
-            {
-                tasks.RemoveAt(selectedIndex);
-                UpdateTaskListBox();
-            }
-            else
-            {
-                MessageBox.Show("Please select a task to remove.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+        Console.Write("Enter the index of the task to remove: ");
+        if (int.TryParse(Console.ReadLine(), out int index) && index >= 0 && index < tasks.Count)
+        {
+            string removedTask = tasks[index];
+            tasks.RemoveAt(index);
+            Console.WriteLine($"Task '{removedTask}' removed successfully!");
         }
-
-        private void UpdateTaskListBox()
+        else
         {
-            taskListBox.Items.Clear();
-            taskListBox.Items.AddRange(tasks.ToArray());
+            Console.WriteLine("Invalid index. Please enter a valid index within the range of tasks.");
+        }
+    }
+
+    static void ViewTasks()
+    {
+        if (tasks.Count == 0)
+        {
+            Console.WriteLine("No tasks available.");
+        }
+        else
+        {
+            Console.WriteLine("Tasks:");
+            for (int i = 0; i < tasks.Count; i++)
+            {
+                Console.WriteLine($"{i}. {tasks[i]}");
+            }
         }
     }
 }
+
